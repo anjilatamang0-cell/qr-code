@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QR名刺管理アプリ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- G. 通知メッセージ（成功・エラーなど） -->
+  <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
+
+  <!-- A. ヘッダー -->
+  <header class="app-header">
+    <h1>QR名刺管理アプリ</h1>
+    <p class="subtitle">QRコードを読み取って、名前と登録時間を一覧に保存します。</p>
+  </header>
+
+  <main class="container">
+
+    <!-- B. QRスキャナー -->
+    <section class="card" aria-labelledby="scannerTitle">
+      <h2 id="scannerTitle">QRコードを読み取る</h2>
+
+      <div class="button-group">
+        <button type="button" id="uploadBtn" class="btn btn-secondary">画像を選ぶ</button>
+        <button type="button" id="startCameraBtn" class="btn btn-primary">カメラを開始</button>
+        <button type="button" id="stopCameraBtn" class="btn btn-pink" disabled>カメラを停止</button>
+      </div>
+
+      <!-- 画像アップロード用の入力（ボタンから開く） -->
+      <input type="file" id="qrFileInput" accept="image/*" hidden>
+
+      <div class="camera-box" id="cameraBox">
+        <p class="camera-placeholder">カメラは停止中です</p>
+        <div id="reader"></div>
+      </div>
+
+      <p id="scanStatus" class="scan-status">待機中です。画像を選ぶか、カメラを開始してください。</p>
+
+      <!-- 画像ファイルの読み取りに使う、見えない場所 -->
+      <div id="fileReader" class="hidden-reader"></div>
+    </section>
+
+    <!-- B2. QRコード作成 -->
+    <section class="card generator-card" aria-labelledby="generatorTitle">
+      <h2 id="generatorTitle">QRコード作成</h2>
+      <label for="qrTextInput" class="generator-label">名前または連絡先</label>
+      <textarea id="qrTextInput" class="generator-input" rows="3" maxlength="300" placeholder="例：Sakura Tanaka" autocomplete="off"></textarea>
+      <p class="generator-hint">名前や連絡先（vCardなど）を入力してください。日本語もOKです。</p>
+      <div class="button-group">
+        <button type="button" id="createQrBtn" class="btn btn-primary">QRコードを作成</button>
+      </div>
+
+      <div id="qrResult" class="qr-result" hidden>
+        <div class="qr-frame">
+          <canvas id="qrCanvas" role="img" aria-label="作成したQRコード"></canvas>
+        </div>
+        <p id="qrCaption" class="qr-caption"></p>
+        <button type="button" id="downloadQrBtn" class="btn btn-pink qr-download">画像をダウンロード</button>
+      </div>
+    </section>
+
+    <!-- C. 統計 -->
+    <section class="card" aria-labelledby="statsTitle">
+      <h2 id="statsTitle">統計</h2>
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-label">登録人数</span>
+          <span class="stat-value"><span id="totalCount">0</span><small>人</small></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">登録件数</span>
+          <span class="stat-value"><span id="recordCount">0</span><small>件</small></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">表示中</span>
+          <span class="stat-value"><span id="visibleCount">0</span><small>件</small></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- D. 検索と並び替え -->
+    <section class="card" aria-labelledby="searchTitle">
+      <h2 id="searchTitle">検索と並び替え</h2>
+      <input type="search" id="searchInput" class="search-input" placeholder="名前を検索..." autocomplete="off" aria-label="名前を検索">
+      <div class="button-group sort-group">
+        <button type="button" id="sortNameBtn" class="btn btn-toggle" aria-pressed="false">名前順</button>
+        <button type="button" id="sortTimeBtn" class="btn btn-toggle" aria-pressed="true">時間順</button>
+      </div>
+    </section>
+
+    <!-- E. 登録一覧 -->
+    <section class="card" aria-labelledby="listTitle">
+      <h2 id="listTitle">登録一覧</h2>
+      <p id="emptyMessage" class="empty-message">まだ登録されていません。QRコードを読み取ってみましょう。</p>
+      <ul id="recordList" class="record-list"></ul>
+    </section>
+
+    <!-- F. 下のボタン -->
+    <section class="card bottom-actions" aria-label="一覧の操作">
+      <button type="button" id="csvBtn" class="btn btn-primary">CSVダウンロード</button>
+      <button type="button" id="deleteAllBtn" class="btn btn-danger">すべて削除</button>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>QR名刺管理アプリ</p>
+  </footer>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="script.js"></script>
+</body>
+</html>
